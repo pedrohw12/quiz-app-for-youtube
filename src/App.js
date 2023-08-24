@@ -1,5 +1,9 @@
 import { useState } from "react";
+
 import "./App.css";
+
+import ProgressBar from 'react-bootstrap/ProgressBar';
+import  Button  from "react-bootstrap/Button";
 
 const questions = [
   {
@@ -39,17 +43,33 @@ const questions = [
       { answerText: "Dormindo", isCorrect: false },
     ],
   },
+  {
+    questionText: "Como aprender a programar?",
+    answerOptions: [
+      { answerText: "Praticando o que se aprende", isCorrect: true },
+      { answerText: "Vendo vídeo", isCorrect: false },
+      { answerText: "Lendo", isCorrect: false },
+      { answerText: "Dormindo", isCorrect: false },
+    ],
+  },
 ];
 
 function App() {
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [correctScore,setCorrectScore] = useState(0);
+  const [wrongScore,setWrongScore] = useState(0);
+
+  let perQuestionScore = 100/(questions.length)
 
   function handleAnswer(isCorrect) {
     if (isCorrect) {
-      setScore(score + 1);
-    }
+      setScore(score + perQuestionScore);
+      setCorrectScore(correctScore + perQuestionScore);
+    }else(
+      setWrongScore(wrongScore+perQuestionScore)
+    )
 
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < questions.length) {
@@ -60,10 +80,26 @@ function App() {
   }
 
   return (
+    <>
+    <div className="score-container">
+      <div className="row">
+        <div className="col-md-5">
+          <ProgressBar now={correctScore} variant="success"/>
+          <div className="mt-1 text-dark fs-5 fw-bold">{score/perQuestionScore}/{questions.length}</div>
+        </div>
+        <div className="col-md-2 d-flex justify-content-center"><span className="bg-dark text-light d-flex align-items-center justify-content-center" style={{borderRadius:'50%', width:40,height:40}}>{score}</span></div>
+        <div className="col-md-5">
+          <ProgressBar now={wrongScore} variant="danger"/>
+          <div className="mt-1 text-dark fs-5 fw-bold">{wrongScore/perQuestionScore}/{questions.length}</div>
+        </div>
+      </div>
+      
+  
+    </div>
     <div className="app">
       {showScore ? (
         <div className="score-section">
-          Você pontuou {score} de {questions.length}
+          Você pontuou {score/perQuestionScore} de {questions.length}
         </div>
       ) : (
         <>
@@ -91,6 +127,7 @@ function App() {
         </>
       )}
     </div>
+    </>
   );
 }
 
